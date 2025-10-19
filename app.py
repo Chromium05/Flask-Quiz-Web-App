@@ -1,18 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
+from website import create_app
+import os
 
-app = Flask(__name__)
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    return render_template("login.html")
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    return render_template("register.html")
+app = create_app()
 
 if __name__ == "__main__":
     app.run(debug=True)
