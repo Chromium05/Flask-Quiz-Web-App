@@ -9,7 +9,8 @@ views = Blueprint('views', __name__)
 @login_required
 def home():
     today = datetime.date.today().strftime("%A, %B %d, %Y")
-    # Data cuaca
+    
+    # biar bisa diakses di template
     forecasts = []
     city = ''
 
@@ -31,7 +32,7 @@ def home():
                 grouped_forecast[date].append(entry)
             
             for i, (date, entries) in enumerate(grouped_forecast.items()):
-                if i >= 3: # ambil hanya 3 hari pertama
+                if i >= 3: # ambil 3 hari pertama aja
                     break
                     
                 day_forecast = {

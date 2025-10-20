@@ -4,170 +4,103 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Flask Quiz App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>{% block title %}Flask Quiz App{% endblock %}</title>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
 
-<body class="bg-white text-gray-900 min-h-screen flex flex-col relative">
+<body class="bg-gradient-to-b from-gray-50 via-white to-indigo-50 text-gray-900 min-h-screen flex flex-col">
+
   <!-- Navbar -->
-  <nav class="bg-gray-800 backdrop-blur-md border-b border-white/10 px-4 fixed w-full z-10 top-0">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  <nav class="fixed w-full z-20 top-0 bg-white/70 backdrop-blur-lg border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
+        
         <!-- Logo -->
-        <div class="flex items-center space-x-2 text-white">
-          <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-            alt="Logo" class="h-8 w-auto" />
-          <span class="ml-2 text-lg font-semibold">Flask Quiz App</span>
-        </div>
+        <a href="/" class="flex items-center space-x-2 text-indigo-700 font-semibold text-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6 h-8 w-auto">
+            <path d="M11.7 2.805a.75.75 0 0 1 .6 0A60.65 60.65 0 0 1 22.83 8.72a.75.75 0 0 1-.231 1.337 49.948 49.948 0 0 0-9.902 3.912l-.003.002c-.114.06-.227.119-.34.18a.75.75 0 0 1-.707 0A50.88 50.88 0 0 0 7.5 12.173v-.224c0-.131.067-.248.172-.311a54.615 54.615 0 0 1 4.653-2.52.75.75 0 0 0-.65-1.352 56.123 56.123 0 0 0-4.78 2.589 1.858 1.858 0 0 0-.859 1.228 49.803 49.803 0 0 0-4.634-1.527.75.75 0 0 1-.231-1.337A60.653 60.653 0 0 1 11.7 2.805Z" />
+            <path d="M13.06 15.473a48.45 48.45 0 0 1 7.666-3.282c.134 1.414.22 2.843.255 4.284a.75.75 0 0 1-.46.711 47.87 47.87 0 0 0-8.105 4.342.75.75 0 0 1-.832 0 47.87 47.87 0 0 0-8.104-4.342.75.75 0 0 1-.461-.71c.035-1.442.121-2.87.255-4.286.921.304 1.83.634 2.726.99v1.27a1.5 1.5 0 0 0-.14 2.508c-.09.38-.222.753-.397 1.11.452.213.901.434 1.346.66a6.727 6.727 0 0 0 .551-1.607 1.5 1.5 0 0 0 .14-2.67v-.645a48.549 48.549 0 0 1 3.44 1.667 2.25 2.25 0 0 0 2.12 0Z" />
+            <path d="M4.462 19.462c.42-.419.753-.89 1-1.395.453.214.902.435 1.347.662a6.742 6.742 0 0 1-1.286 1.794.75.75 0 0 1-1.06-1.06Z" />
+          </svg>
+
+          <span>Flask Quiz App</span>
+        </a>
 
         <!-- Desktop Menu -->
-        <div class="hidden sm:flex space-x-4">
-            {% if user.is_authenticated  %}
-                <a href="/">
-                    <p class="cursor-pointer text-base text-white m-6 group relative w-max">
-                        <span>Home</span>
-                        <span class="absolute -bottom-1 left-0 w-0 transition-all h-0.5 bg-indigo-600 group-hover:w-full pointer"></span>
-                    </p>
-                </a>
-                <a href="/">
-                    <p class="cursor-pointer text-base text-white m-6 group relative w-max">
-                        <span>Quiz</span>
-                        <span class="absolute -bottom-1 left-0 w-0 transition-all h-0.5 bg-indigo-600 group-hover:w-full pointer"></span>
-                    </p>
-                </a>
-                <a href="/">
-                    <p class="cursor-pointer text-base text-white m-6 group relative w-max">
-                        <span>Leaderboard</span>
-                        <span class="absolute -bottom-1 left-0 w-0 transition-all h-0.5 bg-indigo-600 group-hover:w-full pointer"></span>
-                    </p>
-                </a>
-            {% endif %}
+        <div class="hidden sm:flex space-x-6 items-center">
+          {% if user.is_authenticated %}
+            <a href="/" class="hover:text-indigo-600 transition">Home</a>
+            <a href="/quiz" class="hover:text-indigo-600 transition">Quiz</a>
+            <a href="/leaderboard" class="hover:text-indigo-600 transition">Leaderboard</a>
+          {% endif %}
         </div>
 
         <!-- Right side -->
-        <div class="flex items-center space-x-4">
-          <!-- Profile Dropdown -->
+        <div class="flex items-center space-x-3">
+          {% if user.is_authenticated %}
           <div class="relative">
-            {% if user.is_authenticated %}
-            <button id="user-menu-button" class="flex rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <img class="h-8 w-8 rounded-full"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            <button id="user-menu-button" class="flex rounded-full focus:ring-2 focus:ring-indigo-500">
+              <img class="h-9 w-9 rounded-full border border-gray-300"
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&w=256&h=256&q=80"
                 alt="User avatar">
             </button>
-
-            <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 rounded-md bg-gray-800 py-1 shadow-lg ring-1 ring-black/5">
-              <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5">Your Profile</a>
-              <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5">Settings</a>
-              <a href="/logout" class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5">Logout</a>
-            </div>
-            <div class="hidden sm:flex space-x-4">       
-            {% else %}
-              <a href="/login" class="bg-indigo-600 hover:bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold py-2 px-4 rounded text-sm transition-all">Login</a>
-              <a href="/register" class="bg-transparent hover:bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold hover:text-white py-2 px-4 border border-white hover:border-transparent rounded text-sm transition duration-300 ease-in-out">Register</a>
-            {%  endif %}
+            <div id="user-menu" class="hidden absolute right-0 mt-3 w-48 rounded-md bg-white shadow-lg ring-1 ring-gray-200 py-2">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+              <a href="/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
             </div>
           </div>
-
-          <!-- Mobile Menu Button -->
-          <button id="mobile-menu-button"
-            class="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/5">
-            <svg id="menu-open" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-            <svg id="menu-close" class="h-6 w-6 hidden" xmlns="http://www.w3.org/2000/svg"
-              fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          {% else %}
+          <a href="/login" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-semibold transition">Login</a>
+          <a href="/register" class="border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-md text-sm font-semibold transition">Register</a>
+          {% endif %}
         </div>
       </div>
     </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="sm:hidden hidden px-2 pt-2 pb-3 space-y-1">
-      {% if user.is_authenticated  %}
-        <a href="/" class="block rounded-md bg-gray-950/50 px-3 py-2 text-base font-medium text-white">Home</a>
-        <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white">Quiz</a>
-        <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white">Leaderboard</a>
-      {% endif %}
-    </div>
   </nav>
 
-  <!-- Flash messages -->
-  <div class="container mx-auto mt-4 px-4">
+  <!-- Flash Messages -->
+  <div class="container mx-auto px-4 pt-20">
     {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {% if category == 'error' %}
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-20" role="alert">
-                            <span class="block sm:inline">{{ message }}</span>
-                            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-                                <svg class="fill-current h-6 w-6 text-red-500 close" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-                            </span>
-                        </div>
-                    {% elif category == 'success' %}
-                        <div class="bg-green-200 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-20" role="alert">
-                            <span class="block sm:inline">{{ message }}</span>
-                            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
-                                <svg class="fill-current h-6 w-6 text-red-500 close" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-                            </span>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info text-center mb-0 mt-20" role="alert">
-                            {{ message }}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="rounded-xl p-4 mt-4 text-center 
+            {% if category == 'error' %} bg-red-100 text-red-700 border border-red-300
+            {% elif category == 'success' %} bg-green-100 text-green-700 border border-green-300
+            {% else %} bg-blue-100 text-blue-700 border border-blue-300 {% endif %}"
+            role="alert">
+            {{ message }}
+            <button class="ml-3 text-gray-600 hover:text-gray-800 font-bold close">&times;</button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
   </div>
 
-  <!-- Content -->
-  <main class="flex-grow container mx-auto px-4 py-8 mt-16">
+  <!-- Main Content -->
+  <main class="flex-grow container mx-auto px-4 py-10 mt-10">
     {% block content %}{% endblock %}
   </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 border-t border-white/10 py-4 text-center text-gray-400">
-    <span class="text-2xl">✺</span>
-    <p class="mt-2">I am your Footer....</p>
+  <footer class="bg-gray-900 text-gray-400 py-8 text-center mt-20">
+    <p class="text-sm">© 2025 Muhammad Abiddar Putra Mirza</p>
   </footer>
 
-  <!-- JavaScript for menu toggles -->
+  <!-- JavaScript -->
   <script>
     const userMenuBtn = document.getElementById("user-menu-button");
     const userMenu = document.getElementById("user-menu");
-    const mobileMenuBtn = document.getElementById("mobile-menu-button");
-    const mobileMenu = document.getElementById("mobile-menu");
-    const menuOpenIcon = document.getElementById("menu-open");
-    const menuCloseIcon = document.getElementById("menu-close");
-    const closeButtons = document.getElementsByClassName(".close");
+    if (userMenuBtn) {
+      userMenuBtn.addEventListener("click", () => userMenu.classList.toggle("hidden"));
+    }
 
-    userMenuBtn.addEventListener("click", () => {
-      userMenu.classList.toggle("hidden");
-    });
-
-    mobileMenuBtn.addEventListener("click", () => {
-      mobileMenu.classList.toggle("hidden");
-      menuOpenIcon.classList.toggle("hidden");
-      menuCloseIcon.classList.toggle("hidden");
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const closeButtons = document.querySelectorAll('.close');
-      closeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          // Temukan elemen alert terdekat
-          const alertBox = button.closest('[role="alert"]');
-          if (alertBox) {
-            // Tambahkan animasi halus (opsional)
-            alertBox.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-            setTimeout(() => alertBox.remove(), 300); // hapus elemen setelah animasi
-          }
-        });
-      });
+    document.querySelectorAll('.close').forEach(btn => {
+      btn.addEventListener('click', e => e.target.closest('[role="alert"]').remove());
     });
   </script>
 </body>
