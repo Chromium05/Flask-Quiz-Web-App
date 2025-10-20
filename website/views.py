@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 import requests, datetime
 from . import db
+from .models import User
 
 views = Blueprint('views', __name__)
 
@@ -42,8 +43,16 @@ def home():
                     'humidity' : entries[0]['main']['humidity'],
                     'condition': entries[0]['weather'][0]['main'],
                     'description': entries[0]['weather'][0]['description'],
+                    'wind_speed': entries[0]['wind']['speed'],
                     'icon': entries[0]['weather'][0]['icon']
                 }
                 forecasts.append(day_forecast)
 
     return render_template("index.html", user=current_user, today=today, weather=forecasts, city=(city.title() if city else ''))
+
+
+@views.route("/leaderboard")
+@login_required
+def leaderboard():
+    users = db.session.query(User).order_by(User.score).all()
+    return render_template("leaderboard.html", users=users)
