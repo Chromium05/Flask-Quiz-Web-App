@@ -1,4 +1,8 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+from .models import User
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, logout_user, login_required
+from . import db
 
 auth = Blueprint('auth', __name__)
 
@@ -6,16 +10,21 @@ auth = Blueprint('auth', __name__)
 @auth.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get("email", "").strip()
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
 
-        # TODO: authenticate user (check DB)
-        if not username or not password:
+        user = User.query.filter_by(username=username).first()
+        if user:
+            if check_password_hash(user.password, password):
+                flash("Logged in successfully (stub)", category="success")
+                login_user(user, remember=True)
+                return redirect(url_for('views.home'))
+            else:
+                flash("Incorrect password, try again.", category="error")
+        elif not username or not password:
             flash("Please enter username and password", category="error")
         else:
-            flash("Logged in (stub)", category="success")
-            return redirect(url_for('views.home'))
+            flash("Username does not exist", category="error")
 
     return render_template("login.html")
 
@@ -28,8 +37,11 @@ def register():
         password1 = request.form.get("password1", "")
         password2 = request.form.get("password2", "")
 
-        # Basic validations
-        if not username or len(username) < 2:
+        user = User.query.filter_by(username=username).first()
+        
+        if user:
+            flash("Username already exists", category="error")
+        elif not username or len(username) < 2:
             flash("Username must be greater than 1 character", category="error")
         elif not password1 or len(password1) < 6:
             flash("Password must be at least 6 characters", category="error")
@@ -37,14 +49,19 @@ def register():
             flash("Passwords don't match", category="error")
         else:
             # Create new user logic goes here (hash password, save to DB)
-            flash("Account created!", category="success")
-            return redirect(url_for('auth.login'))
+            new_user = User(username=username, email=email, password=generate_password_hash(password1, method='scrypt', salt_length=16))
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(user, remember=True)
+            flash("Account created successfully!", category="success")  
+            return redirect(url_for('views.home'))
 
     return render_template("register.html")
 
 
 @auth.route("/logout")
+@login_required
 def logout():
-    # TODO: perform logout (session clear)
+    logout_user()
     flash("You have been logged out", category="info")
-    return redirect(url_for('views.home'))
+    return redirect(url_for('auth.login'))

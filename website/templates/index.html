@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{name}}</h1>
+    <h1 class="text-4xl font-bold text-gray-900">Hi, {{user.username}} </h1>
+    <p class="mt-4 text-gray-700">Welcome to the Flask Quiz App! Test your knowledge and compete with others on the leaderboard.</p>
 {% endblock %}

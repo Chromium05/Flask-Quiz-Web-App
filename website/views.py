@@ -1,7 +1,10 @@
 from flask import Blueprint, render_template
+from flask_login import login_user, logout_user, login_required, current_user
+from . import db
 
 views = Blueprint('views', __name__)
 
 @views.route("/")
+@login_required
 def home():
-    return render_template("index.html", name="Abiddar")
+    return render_template("index.html", user=current_user)
