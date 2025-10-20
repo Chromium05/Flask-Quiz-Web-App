@@ -1,6 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="text-4xl font-bold text-gray-900">Hi, {{user.username}} </h1>
+    <h1 class="text-4xl font-bold text-gray-900">Hi, {{user.username}}!</h1>
     <p class="mt-4 text-gray-700">Welcome to the Flask Quiz App! Test your knowledge and compete with others on the leaderboard.</p>
+    <p class="text-gray-700">Today is <span class="font-semibold">{{ today }}</span></p>
+
+    <div class="mt-8 text-center">
+        <a href="/quiz" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition text-center">
+            Start Quiz
+        </a>
+    </div>
+
+    <!-- 🌤️ Weather Forecast Section -->
+    <div class="mt-16">
+    <h2 class="text-3xl font-bold text-gray-900 text-center mb-2">🌤️ Weather Forecast</h2>
+    <p class="text-gray-600 text-center mb-6">Get the latest 3-day forecast anywhere in the world</p>
+
+    <!-- 🔍 Search Form -->
+    <form action="/" method="POST" class="flex justify-center mb-10">
+        <input 
+        type="text" 
+        name="city" 
+        id="city" 
+        placeholder="Enter city name..."
+        class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        autocomplete="off"
+        />
+        <button 
+        type="submit"
+        class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition text-center ml-4">
+        Get Forecast
+        </button>
+    </form>
+
+    {% if city %}
+    <h3 class="text-center text-2xl font-semibold text-gray-800 mb-6">{{ city|title }}</h3>
+    {% endif %}
+
+    {% if weather %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
+        {% for day in weather %}
+        <div class="card bg-white shadow-lg hover:shadow-2xl transition rounded-2xl p-6 border border-gray-100 hover:-translate-y-1 duration-300">
+        <div class="flex flex-col items-center text-center">
+            <h3 class="text-xl font-semibold text-gray-800 mb-1">{{ day.date }}</h3>
+            <img 
+            src="http://openweathermap.org/img/wn/{{ day.icon }}@4x.png" 
+            alt="Weather icon" 
+            class="mt-2 w-24 h-24"
+            />
+            <p class="text-3xl font-bold text-indigo-600 mt-2">{{ day.temp_max }}°C</p>
+            <p class="text-gray-700 capitalize">{{ day.condition }}</p>
+            <div class="mt-3 flex justify-center gap-4 text-gray-600 text-sm">
+            <span>💧 {{ day.humidity }}%</span>
+            <span>💨 {{ day.wind_speed }} m/s</span>
+            </div>
+        </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-gray-500 mt-8 italic">Enter a city name to see the weather forecast.</p>
+    {% endif %}
+    </div>
 {% endblock %}

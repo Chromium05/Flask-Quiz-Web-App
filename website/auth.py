@@ -52,7 +52,8 @@ def register():
             new_user = User(username=username, email=email, password=generate_password_hash(password1, method='scrypt', salt_length=16))
             db.session.add(new_user)
             db.session.commit()
-            login_user(user, remember=True)
+            # login the newly created user (not the `user` variable which is None)
+            login_user(new_user, remember=True)
             flash("Account created successfully!", category="success")  
             return redirect(url_for('views.home'))
 
